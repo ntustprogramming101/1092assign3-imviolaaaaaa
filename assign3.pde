@@ -17,7 +17,7 @@ final int PLAYER_HEALTH_MAX = 5;
 
 PImage title, gameover, startNormal, startHovered, restartNormal, restartHovered;
 PImage bg, imgPlayerHealth;
-//PImage groundhogIdle, groundhogDown, groundhogLeft, groundhogRight;
+PImage groundhogIdle, groundhogDown, groundhogLeft, groundhogRight;
 PImage [] soil = new PImage [6];
 PImage [] stone = new PImage [2];
 
@@ -30,11 +30,11 @@ float soilX, soilY;
 float stoneX, stoneY;
 float groundhogX, groundhogY;
 float groundhogSpeed = SPACING;
-//int GROUNDHOG_SIZE = groundhogIdle.width;
+float groundhogSize = groundhogIdle.width;
 
-//boolean downPressed = false;
-//boolean leftPressed = false;
-//boolean rightPressed = false;
+boolean downPressed = false;
+boolean leftPressed = false;
+boolean rightPressed = false;
 
 // For debug function; DO NOT edit or remove this!
 int playerHealth = 0;
@@ -55,15 +55,15 @@ void setup() {
 	startHovered = loadImage("img/startHovered.png");
 	restartNormal = loadImage("img/restartNormal.png");
 	restartHovered = loadImage("img/restartHovered.png");
-  //groundhogIdle = loadImage("img/groundhogIdle.png");
-  //groundhogDown = loadImage("img/groundhogDown.png");
-  //groundhogLeft = loadImage("img/groundhogLeft.png");
-  //groundhogRight = loadImage("img/groundhogRight.png");
+  groundhogIdle = loadImage("img/groundhogIdle.png");
+  groundhogDown = loadImage("img/groundhogDown.png");
+  groundhogLeft = loadImage("img/groundhogLeft.png");
+  groundhogRight = loadImage("img/groundhogRight.png");
   
   //soil
   for(int i = 0; i < soil.length; i++){
     soil[i] = loadImage("img/soil" + i + ".png");
-  }  
+  }
   
   //stone
   for(int j = 0; j < stone.length; j++){
@@ -228,19 +228,31 @@ void draw() {
            }       
          }     
        }
-    //
-    if(soilY >= height - SPACING*4){
-      soilY = height;
-    }
+
 		// Player
-      //if(downPressed){
-      //  image(groundhogDown, groundhogX, groundhogY);
-      //}else if(rightPressed){
-      //  image(groundhogRight, groundhogX, groundhogY);
-      //}else if(leftPressed){
-      //  image(groundhogLeft, groundhogX, groundhogY);
-      //}else{image(groundhogIdle, groundhogX, groundhogY);
-      //}   
+
+    //movement
+    if(downPressed){
+      image(groundhogDown, groundhogX, groundhogY);
+    }else if(rightPressed){
+      image(groundhogRight, groundhogX, groundhogY);
+    }else if(leftPressed){
+      image(groundhogLeft, groundhogX, groundhogY);
+    }else{image(groundhogIdle, groundhogX, groundhogY);
+    }   
+    
+    //boundary detection
+    if(groundhogY > SPACING * 26 - groundhogSize){
+      groundhogY = SPACING * 26 - groundhogSize;
+    }
+    
+    if(groundhogX > width - groundhogSize){
+      groundhogX = width - groundhogSize;
+    }
+    
+    if(groundhogX < 0){
+      groundhogX = 0;
+    }
       
 		// Health UI    
     for(int i = 0; i < playerHealth; i++){
@@ -289,34 +301,22 @@ void draw() {
 
 void keyPressed(){
 
-    //switch(keyCode){
-    //  case DOWN:      
-    //    downPressed = true;
-    //    groundhogY += groundhogSpeed;
-
-    //    if(groundhogY > height - groundhogSpeed){
-    //      groundhogY = height - groundhogSpeed; 
-    //    }
-    //  break;
+    switch(keyCode){
+      case DOWN:      
+        downPressed = true;
+        groundhogY += groundhogSpeed;       
+      break;
       
-    //  case LEFT:        
-    //    leftPressed = true;
-    //    groundhogX -= groundhogSpeed;
+      case LEFT:        
+        leftPressed = true;
+        groundhogX -= groundhogSpeed;        
+      break;
         
-    //    if(groundhogX < 0){
-    //      groundhogX = 0; 
-    //    }     
-    //  break;
-        
-    //  case RIGHT:
-    //    rightPressed = true;
-    //    groundhogX += groundhogSpeed; 
-        
-    //    if(groundhogX > width - groundhogSpeed){
-    //       groundhogX = width - groundhogSpeed; 
-    //    }        
-    //  break;        
-    //}  
+      case RIGHT:
+        rightPressed = true;
+        groundhogX += groundhogSpeed;        
+      break;        
+    }  
     
 	// DO NOT REMOVE OR EDIT THE FOLLOWING SWITCH/CASES
     switch(key){
@@ -340,20 +340,20 @@ void keyPressed(){
     }
 }
 
-//void keyReleased(){
+void keyReleased(){
   
-//      switch(keyCode){
-//      case DOWN:
-//        downPressed = false;
-//      break;
+      switch(keyCode){
+      case DOWN:
+        downPressed = false;
+      break;
       
-//      case LEFT:
-//        leftPressed = false;
-//      break;
+      case LEFT:
+        leftPressed = false;
+      break;
         
-//      case RIGHT:
-//        rightPressed = false;
-//      break;
-//    }  
+      case RIGHT:
+        rightPressed = false;
+      break;
+    }  
     
-//}
+}
