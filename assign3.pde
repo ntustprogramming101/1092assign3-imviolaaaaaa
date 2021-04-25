@@ -87,13 +87,13 @@ void setup() {
   groundhogX = SPACING * 4;
   groundhogY = SPACING * 1; 
   
-  //cabbage random appearance
-  cabbageX = SPACING * (floor(random(8))); //80*(0~7)
-  cabbageY = SPACING * 2 + SPACING * (floor(random(4)));//80*(0~3)
+  ////cabbage random appearance
+  //cabbageX = SPACING * (floor(random(8))); //80*(0~7)
+  //cabbageY = SPACING * 2 + SPACING * (floor(random(4)));//80*(0~3)
   
-  //soldier random floor appearance
-  soldierX = SPACING * (floor(random(8))); 
-  soldierY = SPACING * 2 + SPACING * (floor(random(4)));  
+  ////soldier random floor appearance
+  //soldierX = SPACING * (floor(random(8))); 
+  //soldierY = SPACING * 2 + SPACING * (floor(random(4)));  
 }
 
 void draw() {
@@ -248,15 +248,15 @@ void draw() {
          }     
        }
     
-    //draw cabbage
-    image(cabbage, cabbageX, cabbageY - floorRoll);
+    ////draw cabbage
+    //image(cabbage, cabbageX, cabbageY - floorRoll);
 
-    // draw soldier & soldier movement
-    image(soldier, soldierX, soldierY - floorRoll);
-    soldierX += soldierSpeed;
-    if(soldierX >= width){
-       soldierX = -soldier.width;
-    }
+    //// draw soldier & soldier movement
+    //image(soldier, soldierX, soldierY - floorRoll);
+    //soldierX += soldierSpeed;
+    //if(soldierX >= width){
+    //   soldierX = -soldier.width;
+    //}
     
 		// Player movement    
     if (downMove > 0) {
@@ -309,25 +309,25 @@ void draw() {
     }
     
     //hit detection for cabbage
-    if(groundhogX < cabbageX + cabbage.width
-       && groundhogX + cabbage.width > cabbageX
-       && groundhogY < cabbageY + cabbage.width
-       && groundhogY + cabbage.width > cabbageY){
-         cabbageX = -cabbage.width;
-         cabbageY = -cabbage.width;
-         playerHealth++; 
-       } 
+    //if(groundhogX < cabbageX + cabbage.width
+    //   && groundhogX + cabbage.width > cabbageX
+    //   && groundhogY < cabbageY + cabbage.width
+    //   && groundhogY + cabbage.width > cabbageY){
+    //     cabbageX = -cabbage.width;
+    //     cabbageY = -cabbage.width;
+    //     playerHealth++; 
+    //   } 
        
     //hit detection for soldier
-    if(groundhogX < soldierX + soldier.width
-       && groundhogX + groundhogIdle.width > soldierX
-       && groundhogY < soldierY + soldier.width
-       && groundhogY + groundhogIdle.width > soldierY){
-         groundhogX = SPACING * 4;
-         groundhogY = SPACING * 1;
-         playerHealth--;
-         floorRoll = 0;
-       }  
+    //if(groundhogX < soldierX + soldier.width
+    //   && groundhogX + groundhogIdle.width > soldierX
+    //   && groundhogY < soldierY + soldier.width
+    //   && groundhogY + groundhogIdle.width > soldierY){
+    //     groundhogX = SPACING * 4;
+    //     groundhogY = SPACING * 1;
+    //     playerHealth--;
+    //     floorRoll = 0;
+    //   }  
        
     //gameover detection
      if(playerHealth <= 0){gameState = GAME_OVER;}
@@ -358,9 +358,13 @@ void draw() {
         groundhogX = SPACING * 4;
         groundhogY = SPACING * 1;  
         
-        //cabbage random appearance
-        cabbageX = SPACING * (floor(random(8))); //80*(0~7)
-        cabbageY = SPACING *2 + SPACING * (floor(random(4)));//80*(0~3)
+        ////cabbage random appearance
+        //cabbageX = SPACING * (floor(random(8))); //80*(0~7)
+        //cabbageY = SPACING *2 + SPACING * (floor(random(4)));//80*(0~3)
+        
+        ////soldier random floor appearance
+        //soldierX = SPACING * (floor(random(8))); 
+        //soldierY = SPACING * 2 + SPACING * (floor(random(4)));  
 			}
 		}else{
 
