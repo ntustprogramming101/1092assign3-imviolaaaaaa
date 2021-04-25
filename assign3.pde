@@ -247,9 +247,18 @@ void draw() {
            }       
          }     
        }
+    
+    //draw cabbage
+    image(cabbage, cabbageX, cabbageY - floorRoll);
 
-		// Player
-    //movement    
+    // draw soldier & soldier movement
+    image(soldier, soldierX, soldierY - floorRoll);
+    soldierX += soldierSpeed;
+    if(soldierX >= width){
+       soldierX = -soldier.width;
+    }
+    
+		// Player movement    
     if (downMove > 0) {
       if (downMove == 1) {
         groundhogY = round(groundhogY + SPACING/actionFrame);
@@ -281,7 +290,7 @@ void draw() {
       image(groundhogIdle, groundhogX, groundhogY);
     }
              
-    //boundary detection    
+    //Player boundary detection    
     if(groundhogX > width - groundhogIdle.width){
       groundhogX = width - groundhogIdle.width;
     }
@@ -289,17 +298,7 @@ void draw() {
     if(groundhogX < 0){
       groundhogX = 0;
     }
-    
-    //draw cabbage
-    image(cabbage, cabbageX, cabbageY - floorRoll);
-
-    // draw soldier & soldier movement
-    image(soldier, soldierX, soldierY - floorRoll);
-    soldierX += soldierSpeed;
-    if(soldierX >= width){
-       soldierX = -soldier.width;
-    }
-    
+        
     popMatrix();
      
 		// Health UI    
