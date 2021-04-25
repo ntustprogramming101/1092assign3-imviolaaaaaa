@@ -16,7 +16,7 @@ final int STONE_ROW = 8;
 final int PLAYER_HEALTH_MAX = 5;
 
 PImage title, gameover, startNormal, startHovered, restartNormal, restartHovered;
-PImage bg, imgPlayerHealth;
+PImage bg, imgPlayerHealth, cabbage, soldier;
 PImage groundhogIdle, groundhogDown, groundhogLeft, groundhogRight;
 PImage [] soil = new PImage [6];
 PImage [] stone = new PImage [2];
@@ -25,12 +25,18 @@ float playerHealthX, playerHealthY;
 float playerHealth_Int = 2;
 float playerHealth_Start = 10;
 float playerHealth_Spacing = 20;
-
+float cabbageX, cabbageY;
+float soldierX, soldierY;
+float soldierSpeed = 2;
 float soilX, soilY;
 float stoneX, stoneY;
 float groundhogX, groundhogY;
-float groundhogSpeed = SPACING;
-float groundhogSize = groundhogIdle.width;
+float floorSpeed = 80;
+float floorRoll = 0;
+float actionFrame = 15;
+int downMove = 0;
+int rightMove = 0;
+int leftMove = 0;
 
 boolean downPressed = false;
 boolean leftPressed = false;
@@ -43,10 +49,13 @@ boolean debugMode = false;
 
 void setup() {
 	size(640, 480);
+  frameRate(60);
 
 	//game elements
 	bg = loadImage("img/bg.jpg");
   imgPlayerHealth = loadImage("img/life.png");
+  cabbage = loadImage("img/cabbage.png");
+  soldier = loadImage("img/soldier.png");
   
   //game state
 	title = loadImage("img/title.jpg");
@@ -76,7 +85,15 @@ void setup() {
   
   //groundhog
   groundhogX = SPACING * 4;
-  groundhogY = SPACING * 1;  
+  groundhogY = SPACING * 1; 
+  
+  //cabbage random appearance
+  cabbageX = SPACING * (floor(random(8))); //80*(0~7)
+  cabbageY = SPACING * 2 + SPACING * (floor(random(4)));//80*(0~3)
+  
+  //soldier random floor appearance
+  soldierX = SPACING * (floor(random(8))); 
+  soldierY = SPACING * 2 + SPACING * (floor(random(4)));  
 }
 
 void draw() {
@@ -122,16 +139,19 @@ void draw() {
 		image(bg, 0, 0);
 
 		// Sun
-	    stroke(255,255,0);
-	    strokeWeight(5);
-	    fill(253,184,19);
-	    ellipse(590,50,120,120);
+	  stroke(255,255,0);
+	  strokeWeight(5);
+	  fill(253,184,19);
+	  ellipse(590,50,120,120);
+
+    pushMatrix();
+    translate(0, floorRoll);
 
 		// Grass
 		fill(124, 204, 25);
 		noStroke();
 		rect(0, 160 - GRASS_HEIGHT, width, GRASS_HEIGHT);
-
+  
 		// Soil
     for(int i = 0; i < SOIL_COL; i++){      
         for(int j = 0; j < SOIL_ROW; j++){
@@ -152,7 +172,6 @@ void draw() {
       }
       
      //Stone
-     
      //floor 1-8
      for(int col = 0; col < STONE_COL; col++){
        stoneX = col * SPACING;
@@ -230,35 +249,92 @@ void draw() {
        }
 
 		// Player
-
-    //movement
-    if(downPressed){
-      image(groundhogDown, groundhogX, groundhogY);
-    }else if(rightPressed){
-      image(groundhogRight, groundhogX, groundhogY);
-    }else if(leftPressed){
-      image(groundhogLeft, groundhogX, groundhogY);
-    }else{image(groundhogIdle, groundhogX, groundhogY);
-    }   
-    
-    //boundary detection
-    if(groundhogY > SPACING * 26 - groundhogSize){
-      groundhogY = SPACING * 26 - groundhogSize;
+    //movement    
+    if (downMove > 0) {
+      if (downMove == 1) {
+        groundhogY = round(groundhogY + SPACING/actionFrame);
+        image(groundhogIdle, groundhogX, groundhogY);
+      } else {
+        groundhogY = groundhogY + SPACING/actionFrame;
+        image(groundhogDown, groundhogX, groundhogY);
+      }
+      downMove -= 1;
+    }else if(leftMove > 0) {
+      if (leftMove == 1) {
+        groundhogX = round(groundhogX - SPACING/actionFrame);
+        image(groundhogIdle, groundhogX, groundhogY);
+      } else {
+        groundhogX = groundhogX - SPACING/actionFrame;
+        image(groundhogLeft, groundhogX, groundhogY);
+      }
+      leftMove -= 1;
+    }else if(rightMove > 0) {
+      if (rightMove == 1) {
+        groundhogX = round(groundhogX + SPACING/actionFrame);
+        image(groundhogIdle, groundhogX, groundhogY);
+      } else {
+        groundhogX = groundhogX + SPACING/actionFrame;
+        image(groundhogRight, groundhogX, groundhogY);
+      }
+      rightMove -= 1;
+    }else if(downMove == 0 && leftMove == 0 && rightMove == 0){
+      image(groundhogIdle, groundhogX, groundhogY);
     }
-    
-    if(groundhogX > width - groundhogSize){
-      groundhogX = width - groundhogSize;
+             
+    //boundary detection    
+    if(groundhogX > width - groundhogIdle.width){
+      groundhogX = width - groundhogIdle.width;
     }
     
     if(groundhogX < 0){
       groundhogX = 0;
     }
-      
+    
+    //draw cabbage
+    image(cabbage, cabbageX, cabbageY - floorRoll);
+
+    // draw soldier & soldier movement
+    image(soldier, soldierX, soldierY - floorRoll);
+    soldierX += soldierSpeed;
+    if(soldierX >= width){
+       soldierX = -soldier.width;
+    }
+    
+    popMatrix();
+     
 		// Health UI    
     for(int i = 0; i < playerHealth; i++){
       playerHealthX = playerHealth_Start + i * (playerHealth_Spacing + imgPlayerHealth.width);
       playerHealthY = playerHealth_Start;
       image(imgPlayerHealth, playerHealthX, playerHealthY);
+    }
+    
+    //hit detection for cabbage
+    if(groundhogX < cabbageX + cabbage.width
+       && groundhogX + cabbage.width > cabbageX
+       && groundhogY < cabbageY + cabbage.width
+       && groundhogY + cabbage.width > cabbageY){
+         cabbageX = -cabbage.width;
+         cabbageY = -cabbage.width;
+         playerHealth++; 
+       } 
+       
+    //hit detection for soldier
+    if(groundhogX < soldierX + soldier.width
+       && groundhogX + groundhogIdle.width > soldierX
+       && groundhogY < soldierY + soldier.width
+       && groundhogY + groundhogIdle.width > soldierY){
+         groundhogX = SPACING * 4;
+         groundhogY = SPACING * 1;
+         playerHealth--;
+         floorRoll = 0;
+       }  
+       
+    //gameover detection
+     if(playerHealth <= 0){gameState = GAME_OVER;}
+     
+    if(groundhogY >= SPACING * (26-1-4) || groundhogY <= SPACING){
+      cameraOffsetY = 0;
     }
     
 		break;
@@ -278,11 +354,14 @@ void draw() {
 				
         //player health initialize
         playerHealth = int(playerHealth_Int);
-        constrain(playerHealth,0 ,PLAYER_HEALTH_MAX);
         
         //groundhog initialize
         groundhogX = SPACING * 4;
         groundhogY = SPACING * 1;  
+        
+        //cabbage random appearance
+        cabbageX = SPACING * (floor(random(8))); //80*(0~7)
+        cabbageY = SPACING *2 + SPACING * (floor(random(4)));//80*(0~3)
 			}
 		}else{
 
@@ -300,21 +379,37 @@ void draw() {
 }
 
 void keyPressed(){
-
+    if (downMove > 0 || leftMove > 0 || rightMove > 0) {return;}
     switch(keyCode){
-      case DOWN:      
-        downPressed = true;
-        groundhogY += groundhogSpeed;       
+      case DOWN: 
+        if(groundhogY < SPACING * 26 - groundhogIdle.width){
+          downPressed = true;
+          downMove = int(actionFrame);
+          if(groundhogY < SPACING * (26-1-4)){
+            floorRoll -= floorSpeed;
+          }
+          
+        }
+        //downPressed = true;
+        //groundhogY += groundhogSpeed;       
       break;
       
-      case LEFT:        
-        leftPressed = true;
-        groundhogX -= groundhogSpeed;        
+      case LEFT:  
+        if(groundhogX > 0){
+          leftPressed  = true;
+          leftMove = int(actionFrame);
+        }          
+        //leftPressed = true;
+        //groundhogX -= groundhogSpeed;          
       break;
         
       case RIGHT:
+      if(groundhogX < width){
         rightPressed = true;
-        groundhogX += groundhogSpeed;        
+        rightMove = int(actionFrame);
+      }
+        //rightPressed = true;
+        //groundhogX += groundhogSpeed;            
       break;        
     }  
     
