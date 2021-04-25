@@ -350,7 +350,7 @@ void draw() {
 			if(mousePressed){
 				gameState = GAME_RUN;
 				mousePressed = false;
-				
+	floorRoll = 0;			
         //player health initialize
         playerHealth = int(playerHealth_Int);
         
