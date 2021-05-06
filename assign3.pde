@@ -352,6 +352,7 @@ void draw() {
 				mousePressed = false;
 				
         floorRoll = 0;
+	downMove = 0;
         //player health initialize
         playerHealth = int(playerHealth_Int);
         
